@@ -16,5 +16,10 @@ namespace Tomogram_Visualization
         {
             InitializeComponent();
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Bin bin = new Bin();
+        }
     }
 }
