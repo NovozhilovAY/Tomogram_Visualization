@@ -71,15 +71,20 @@ namespace Tomogram_Visualization
             //    view.DrawQuads(currentLayer);
             //    glControl1.SwapBuffers();
             //}
-            if(loaded)
+            //if(loaded)
+            //{
+            //    if(needReload)
+            //    {
+            //        view.generateTextureImage(currentLayer);
+            //        view.Load2DTexture();
+            //        needReload = false;
+            //    }
+            //    view.DrawTexture();
+            //    glControl1.SwapBuffers();
+            //}
+            if (loaded)
             {
-                if(needReload)
-                {
-                    view.generateTextureImage(currentLayer);
-                    view.Load2DTexture();
-                    needReload = false;
-                }
-                view.DrawTexture();
+                view.DrawQuadStrip(currentLayer);
                 glControl1.SwapBuffers();
             }
         }
