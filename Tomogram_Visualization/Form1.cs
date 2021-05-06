@@ -18,6 +18,7 @@ namespace Tomogram_Visualization
         private int currentLayer;
         private DateTime NextFPSUpdate = DateTime.Now.AddSeconds(1);
         private int FrameCount;
+        private bool needReload = false;
 
         public Form1()
         {
@@ -65,9 +66,20 @@ namespace Tomogram_Visualization
 
         private void glControl1_Paint(object sender, PaintEventArgs e)
         {
+            //if(loaded)
+            //{
+            //    view.DrawQuads(currentLayer);
+            //    glControl1.SwapBuffers();
+            //}
             if(loaded)
             {
-                view.DrawQuads(currentLayer);
+                if(needReload)
+                {
+                    view.generateTextureImage(currentLayer);
+                    view.Load2DTexture();
+                    needReload = false;
+                }
+                view.DrawTexture();
                 glControl1.SwapBuffers();
             }
         }
@@ -75,6 +87,7 @@ namespace Tomogram_Visualization
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
             currentLayer = trackBar1.Value;
+            needReload = true;
             //view.DrawQuads(currentLayer);
             //glControl1.SwapBuffers();
         }
