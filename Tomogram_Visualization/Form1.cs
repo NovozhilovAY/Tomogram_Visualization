@@ -12,6 +12,8 @@ namespace Tomogram_Visualization
 {
     public partial class Form1 : Form
     {
+        enum Mode { Quads, Texture2D, QuadStrip };
+        private Mode mode = Mode.Quads;
         private Bin bin;
         private View view;
         private bool loaded = false;
@@ -19,6 +21,10 @@ namespace Tomogram_Visualization
         private DateTime NextFPSUpdate = DateTime.Now.AddSeconds(1);
         private int FrameCount;
         private bool needReload = false;
+
+
+        private int min;
+        private int width;
 
         public Form1()
         {
@@ -48,6 +54,9 @@ namespace Tomogram_Visualization
             bin = new Bin();
             view = new View();
             currentLayer = 1;
+            min = trackBar2.Value;
+            width = trackBar3.Value;
+            radioButton1.Checked = true;
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -66,26 +75,30 @@ namespace Tomogram_Visualization
 
         private void glControl1_Paint(object sender, PaintEventArgs e)
         {
-            //if(loaded)
-            //{
-            //    view.DrawQuads(currentLayer);
-            //    glControl1.SwapBuffers();
-            //}
-            //if(loaded)
-            //{
-            //    if(needReload)
-            //    {
-            //        view.generateTextureImage(currentLayer);
-            //        view.Load2DTexture();
-            //        needReload = false;
-            //    }
-            //    view.DrawTexture();
-            //    glControl1.SwapBuffers();
-            //}
             if (loaded)
             {
-                view.DrawQuadStrip(currentLayer);
-                glControl1.SwapBuffers();
+                switch(mode)
+                {
+                    case Mode.Quads:
+                        view.DrawQuads(currentLayer,min,width);
+                        glControl1.SwapBuffers();
+                        break;
+                    case Mode.Texture2D:
+                        if (needReload)
+                        {
+                            view.generateTextureImage(currentLayer, min, width);
+                            view.Load2DTexture();
+                            needReload = false;
+                        }
+                        view.DrawTexture();
+                        glControl1.SwapBuffers();
+                        break;
+                    case Mode.QuadStrip:
+                        view.DrawQuadStrip(currentLayer, min, width);
+                        glControl1.SwapBuffers();
+                        break;
+                }
+                
             }
         }
 
@@ -93,8 +106,33 @@ namespace Tomogram_Visualization
         {
             currentLayer = trackBar1.Value;
             needReload = true;
-            //view.DrawQuads(currentLayer);
-            //glControl1.SwapBuffers();
+        }
+
+        private void trackBar2_Scroll(object sender, EventArgs e)
+        {
+            min = trackBar2.Value;
+            needReload = true;
+        }
+
+        private void trackBar3_Scroll(object sender, EventArgs e)
+        {
+            width = trackBar3.Value;
+            needReload = true;
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            mode = Mode.Quads;
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            mode = Mode.Texture2D;
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+            mode = Mode.QuadStrip;
         }
     }
 }
